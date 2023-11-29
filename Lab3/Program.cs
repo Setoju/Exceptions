@@ -32,9 +32,13 @@ namespace Exceptions
 
                     if (fileProcessor.FileCount > 0)
                     {
-                        Console.WriteLine($"Sum: {fileProcessor.GetSum}");
-                        Console.WriteLine($"Multiplication: {fileProcessor.GetProduct}");
+                        Console.WriteLine($"Sum: {fileProcessor.GetSum}");                        
                         Console.WriteLine($"Arithmetic mean: {fileProcessor.CalculateAverage()}");
+                        Console.WriteLine("Multiplications:");
+                        foreach (var multiplication in fileProcessor.GetMultiplications)
+                        {
+                            Console.Write(multiplication + " ");
+                        }
                     }
                     break;
                 case 2:

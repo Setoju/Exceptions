@@ -11,9 +11,9 @@ namespace Exceptions
 {
     internal class ReadingBadData
     {
-        private long _sum;
-        private int _product;
+        private long _sum;        
         private int _correctFiles;
+        private List<int> _multiplications = new List<int>();
 
         public void ProcessFile(string fileName)
         {
@@ -25,9 +25,13 @@ namespace Exceptions
                     {
                         int firstNumber = int.Parse(reader.ReadLine());
                         int secondNumber = int.Parse(reader.ReadLine());
-
-                        _sum += firstNumber + secondNumber;
-                        _product *= firstNumber * secondNumber;
+                        int product = 0;
+                        checked
+                        {
+                            product = firstNumber * secondNumber;
+                        }
+                        _sum += product;
+                        _multiplications.Add(product);
                         _correctFiles++;
                     }
                     catch (OverflowException)
@@ -59,12 +63,14 @@ namespace Exceptions
 
         public double CalculateAverage()
         {
-            if (_correctFiles > 0)
+            try
             {
-                return (double)_product / _correctFiles;
+                return (double)_sum / _correctFiles;
             }
-
-            return 0;
+            catch (DivideByZeroException e)
+            {
+                throw e;
+            }            
         }
 
         public int FileCount
@@ -80,13 +86,12 @@ namespace Exceptions
             {
                 return _sum;
             }
-        }
-
-        public long GetProduct
+        }       
+        public List<int> GetMultiplications
         {
             get
             {
-                return _product;
+                return _multiplications;
             }
         }
 
@@ -94,10 +99,11 @@ namespace Exceptions
         {
             try
             {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);                    
-                }                
+                //if (File.Exists(filePath))
+                //{
+                //    File.Delete(filePath);                    
+                //}
+                File.Delete(filePath);
             }
             catch (Exception ex)
             {
