@@ -19,7 +19,7 @@ namespace Exceptions
                 folderPath = Directory.GetCurrentDirectory();
             }
 
-            if (Directory.Exists(folderPath))
+            try
             {
                 string[] files = Directory.GetFiles(folderPath);
 
@@ -27,14 +27,14 @@ namespace Exceptions
                 {
                     if (IsImageFile(filePath))
                     {
-                        MirrorImage(filePath);                        
+                        MirrorImage(filePath);
                     }
                 }
             }
-            else
+            catch (DirectoryNotFoundException e)
             {
-                MessageBox.Show("Directory doesn't exist");
-            }
+                Console.WriteLine(e.Message);
+            }            
         }
         private bool IsImageFile(string filePath)
         {
@@ -45,17 +45,24 @@ namespace Exceptions
 
         private void MirrorImage(string filePath)
         {
-            using (Image image = Image.FromFile(filePath))
+            try
             {
-                image.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                
-                string newFilePath = Path.Combine(
-                    Path.GetDirectoryName(filePath),
-                    Path.GetFileNameWithoutExtension(filePath) + "-mirrored.gif"
-                );
+                using (Image image = Image.FromFile(filePath))
+                {
+                    image.RotateFlip(RotateFlipType.RotateNoneFlipX);
 
-                image.Save(newFilePath, ImageFormat.Gif);
-                Console.WriteLine($"Mirrored and saved as GIF: {Path.GetFileName(newFilePath)}");
+                    string newFilePath = Path.Combine(
+                        Path.GetDirectoryName(filePath),
+                        Path.GetFileNameWithoutExtension(filePath) + "-mirrored.gif"
+                    );
+
+                    image.Save(newFilePath, ImageFormat.Gif);
+                    Console.WriteLine($"Mirrored and saved as GIF: {Path.GetFileName(newFilePath)}");
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"File {Path.GetFileNameWithoutExtension(filePath)} should be an image but it's corrupted.");
             }
         }
     }

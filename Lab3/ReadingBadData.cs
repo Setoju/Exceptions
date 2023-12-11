@@ -21,10 +21,10 @@ namespace Exceptions
             {
                 using (StreamReader reader = new StreamReader(fileName))
                 {
+                    int firstNumber = int.Parse(reader.ReadLine());
+                    int secondNumber = int.Parse(reader.ReadLine());
                     try
-                    {
-                        int firstNumber = int.Parse(reader.ReadLine());
-                        int secondNumber = int.Parse(reader.ReadLine());
+                    {                        
                         int product = 0;
                         checked
                         {
@@ -42,18 +42,18 @@ namespace Exceptions
                     }
                 }
             }
+            catch(Exception e) when (e is OverflowException || e is FormatException)
+            {
+                Console.WriteLine($"File {fileName} has incorrect data.");
+                string outputFileName = "bad_data.txt";
+                File.AppendAllText(outputFileName, $"{fileName} (Bad Data)\n");
+            }            
             catch (FileNotFoundException)
             {
                 Console.WriteLine($"File {fileName} doesn't exist.");
                 string outputFileName = "no_file.txt";
                 File.AppendAllText(outputFileName, $"{fileName} (File Not Found)\n");
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine($"File {fileName} has incorrect data.");
-                string outputFileName = "bad_data.txt";
-                File.AppendAllText(outputFileName, $"{fileName} (Bad Data)\n");
-            }
+            }           
             catch (ArgumentNullException)
             {
                 Console.WriteLine($"File {fileName} has no data.");
@@ -61,11 +61,11 @@ namespace Exceptions
         }        
 
 
-        public double CalculateAverage()
+        public long CalculateAverage()
         {
             try
             {
-                return (double)_sum / _correctFiles;
+                return _sum / _correctFiles;
             }
             catch (DivideByZeroException e)
             {
@@ -98,11 +98,7 @@ namespace Exceptions
         public static void FileDelete(string filePath)
         {
             try
-            {
-                //if (File.Exists(filePath))
-                //{
-                //    File.Delete(filePath);                    
-                //}
+            {                
                 File.Delete(filePath);
             }
             catch (Exception ex)
